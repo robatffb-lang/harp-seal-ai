@@ -6,7 +6,7 @@ const newChatBtn = document.getElementById('new-chat-btn');
 
 let conversationHistory = [];
 
-// Inject keyframe CSS animations dynamically
+// 动态注入打字光标与淡入动画
 if (!document.getElementById('harp-seal-animations')) {
   const animStyle = document.createElement('style');
   animStyle.id = 'harp-seal-animations';
@@ -52,7 +52,7 @@ chatForm.addEventListener('submit', async (e) => {
   userInput.value = '';
   userInput.style.height = 'auto';
 
-  // Append user message to active history in Gemini format
+  // 保存对话历史（Gemini API 要求的格式）
   conversationHistory.push({
     role: 'user',
     parts: [{ text: text }]
@@ -62,17 +62,11 @@ chatForm.addEventListener('submit', async (e) => {
   let fullResponseText = '';
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`;
-    
-    const response = await fetch('https://your-vercel-app.vercel.app/api/chat', {
+    // 请求 Vercel 的 Serverless Function 接口
+    const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: conversationHistory,
-        systemInstruction: {
-          parts: [{ text: 'You are Harp Seal AI, a sleek, agile, and friendly AI assistant.' }]
-        }
-      })
+      body: JSON.stringify({ messages: conversationHistory })
     });
 
     const reader = response.body.getReader();
@@ -100,13 +94,13 @@ chatForm.addEventListener('submit', async (e) => {
               chatStream.scrollTo({ top: chatStream.scrollHeight, behavior: 'smooth' });
             }
           } catch (err) {
-            console.error('SSE JSON parsing error:', err);
+            console.error('SSE JSON 解析错误:', err);
           }
         }
       }
     }
 
-    // Save model response to memory history
+    // 完成回答后移除打字光标，并保存 Model 的回复到历史记忆中
     assistantBubble.innerHTML = window.marked ? marked.parse(fullResponseText) : fullResponseText;
     conversationHistory.push({
       role: 'model',
@@ -125,7 +119,7 @@ function appendMessage(sender, content) {
 
   const bubble = document.createElement('div');
   bubble.classList.add('message-bubble');
-  bubble.innerHTML = sender === 'user' ? content : content;
+  bubble.innerHTML = content;
 
   row.appendChild(bubble);
   chatStream.appendChild(row);
