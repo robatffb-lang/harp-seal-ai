@@ -63,11 +63,12 @@ chatForm.addEventListener('submit', async (e) => {
 
   try {
     // 请求 Vercel 的 Serverless Function 接口
-    const response = await fetch('https://harp-seal-ai-wkio.vercel.app/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: conversationHistory })
-    });
+    // ⚠️ 替换为你 Vercel Dashboard 上的完整域名
+const response = await fetch('https://harp-seal-ai-wkio.vercel.app/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ messages: conversationHistory })
+});
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder('utf-8');
