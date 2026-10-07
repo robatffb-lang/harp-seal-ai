@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Harp Seal AI Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Arctic Frost Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <!-- 使用您提供的海豹图片作为 Brand Icon -->
+            <img src="https://i.redd.it/faly8vbje2me1.jpeg" alt="Harp Seal Logo" class="brand-img" />
+          </div>
+          <span class="brand-title">HarpSeal.ai</span>
+        </div>
+        <button class="new-chat-btn" id="new-chat-btn" title="New Dive">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="history-section">
+        <span class="section-label">Arctic History</span>
+        <div class="history-list" id="history-list">
+          <div class="history-item active">
+            <span class="seal-dot"></span>
+            <span>Current Deep Dive</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="avatar">
+            <img src="https://i.redd.it/faly8vbje2me1.jpeg" alt="User Seal Avatar" />
+          </div>
+          <div class="user-info">
+            <span class="user-name">Arctic Explorer</span>
+            <span class="user-badge">Frost Pro</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Viewport -->
+    <main class="chat-viewport">
+      <header class="top-header">
+        <div class="model-badge">
+          <span class="pulse-indicator"></span>
+          <span>Harp Seal v3.5 • Ice Floe</span>
+        </div>
+      </header>
+
+      <!-- Scrollable Chat Area -->
+      <div id="chat-stream" class="chat-stream">
+        <div class="hero-welcome" id="welcome-screen">
+          <div class="glow-orb"></div>
+          <div class="seal-badge">
+            <img src="https://i.redd.it/faly8vbje2me1.jpeg" class="badge-icon" />
+            Harp Seal Intelligence
+          </div>
+          <h1 class="hero-heading">Glide through complex tasks.</h1>
+          <p class="hero-subtext">Clean, deep, and agile AI assistance. What are we exploring today?</p>
+
+          <div class="prompt-grid">
+            <button class="prompt-card" onclick="useSuggestion('Refactor a JavaScript async flow for maximum speed')">
+              <div class="card-icon">🧊</div>
+              <div class="card-text">
+                <strong>Clean Code</strong>
+                <span>Refactor async logic into crystal-clear code</span>
+              </div>
+            </button>
+
+            <button class="prompt-card" onclick="useSuggestion('Design a sleek dark mode color palette with ice blue accents')">
+              <div class="card-icon">🎨</div>
+              <div class="card-text">
+                <strong>UI Design System</strong>
+                <span>Architect icy dark mode aesthetic tokens</span>
+              </div>
+            </button>
+
+            <button class="prompt-card" onclick="useSuggestion('Explain how deep ocean currents work in concise steps')">
+              <div class="card-icon">🌊</div>
+              <div class="card-text">
+                <strong>Ocean Science</strong>
+                <span>Deep dive into thermohaline circulation</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Glass Input Bar -->
+      <div class="input-wrapper">
+        <form id="chat-form" class="floating-input-card">
+          <textarea 
+            id="user-input" 
+            placeholder="Ask Harp Seal anything..." 
+            rows="1" 
+            required
+          ></textarea>
+          <div class="input-actions">
+            <button type="submit" id="send-btn" class="send-btn" aria-label="Send Message">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="19" x2="12" y2="5"></line>
+                <polyline points="5 12 12 5 19 12"></polyline>
+              </svg>
+            </button>
+          </div>
+        </form>
+        <span class="footnote">Harp Seal AI • Gliding smoothly across complex prompts.</span>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
