@@ -1,10 +1,11 @@
+import { Readable } from 'stream';
+
 export default async function handler(req, res) {
-  // 1. 允许来自 GitHub Pages 的跨域请求 (CORS)
+  // 1. 设置跨域请求头 (CORS)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // 处理浏览器的预检请求 (Preflight OPTIONS Request)
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -14,19 +15,13 @@ export default async function handler(req, res) {
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
-
   if (!apiKey) {
-    return res.status(500).json({ error: 'Server configuration error: GEMINI_API_KEY is missing.' });
+    return res.status(500).json({ error: 'GEMINI_API_KEY Missing' });
   }
 
   const { messages } = req.body;
 
-  if (!messages || !Array.isArray(messages)) {
-    return res.status(400).json({ error: 'Invalid or missing messages array.' });
-  }
-
   try {
-    // 2. 使用标准的 gemini-2.5-flash 模型
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${apiKey}`;
 
     const response = await fetch(url, {
@@ -42,29 +37,24 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Gemini API Error:', errorText);
-      return res.status(response.status).json({ error: 'Error response from Gemini API.' });
+      console.error('Gemini Error:', errorText);
+      return res.status(response.status).json({ error: 'Gemini API call failed' });
     }
 
-    // 3. 设置流式 SSE 响应头并实时转发数据
+    // 2. 告诉浏览器和 Vercel 这是无缓存的 SSE 流
     res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
     res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no'); // 禁止 Nginx/Vercel 代理层缓冲
 
-    const reader = response.body.getReader();
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      res.write(value);
-    }
-    res.end();
+    // 3. 使用 Web ReadableStream 转换为 Node Readable 管道直接 pipe 给 res
+    const nodeReadable = Readable.fromWeb(response.body);
+    nodeReadable.pipe(res);
 
   } catch (error) {
-    console.error('API Router Internal Error:', error);
+    console.error('API Error:', error);
     if (!res.headersSent) {
-      res.status(500).json({ error: 'Failed to complete AI request.' });
-    } else {
-      res.end();
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 }
